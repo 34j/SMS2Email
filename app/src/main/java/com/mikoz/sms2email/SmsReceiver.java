@@ -22,7 +22,11 @@ public class SmsReceiver extends BroadcastReceiver {
     if (Objects.equals(intent.getAction(), Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
       SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
       String sender = messages[0].getOriginatingAddress();
-      String message = sb.toString();
+      StringBuilder bodyText = new StringBuilder();
+      for (SmsMessage message : messages) {
+        bodyText.append(message.getMessageBody());
+      }
+      String message = bodyText.toString();
       Toast.makeText(context, message, Toast.LENGTH_LONG).show();
       new NotificationCompat.Builder(context.getApplicationContext())
           .setContentTitle(sender)

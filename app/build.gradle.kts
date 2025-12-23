@@ -39,6 +39,13 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging{
+        resources{
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/NOTICE.md"
+        }
+    }
 }
 
 dependencies {
@@ -57,7 +64,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.android.mail)
     implementation(libs.android.activation)
 }
