@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
-import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import java.util.Objects;
 
@@ -23,7 +22,8 @@ public class SmsReceiver extends BroadcastReceiver {
         bodyText.append(message.getMessageBody());
       }
       String message = bodyText.toString();
-      Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+      mailSender.send(context, sender, message);
 
       NotificationHelper.createNotificationChannel(context);
 
@@ -32,13 +32,11 @@ public class SmsReceiver extends BroadcastReceiver {
 
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
-              .setContentTitle(sender)
+              .setContentTitle("✅️Transferred SMS from " + sender)
               .setContentText(message)
               .setSmallIcon(android.R.drawable.ic_dialog_email);
 
       notificationManager.notify(2, builder.build());
-
-      mailSender.send(context, sender, message);
     }
   }
 }
