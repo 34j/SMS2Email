@@ -20,6 +20,10 @@ public class MailSender {
   private static final String TAG = "MailSender";
 
   public void send(Context context, String subject, String content) {
+    new Thread(() -> sendSync(context, subject, content)).start();
+  }
+
+  private void sendSync(Context context, String subject, String content) {
     final SharedPreferences pref = context.getSharedPreferences("", Context.MODE_PRIVATE);
     final Properties prop = new Properties();
     prop.put("mail.smtp.host", pref.getString("smtp.host", "smtp.gmail.com"));
@@ -44,6 +48,21 @@ public class MailSender {
       message.setSubject(subject);
       message.setText(content);
       Transport.send(message);
+
+      // Show success notification
+      NotificationHelper.createNotificationChannel(context);
+
+      NotificationManager notificationManager =
+          (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+      NotificationCompat.Builder successBuilder =
+          new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
+              .setContentTitle("Email sent successfully")
+              .setContentText("Subject: " + subject)
+              .setSmallIcon(android.R.drawable.ic_dialog_email)
+              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+      notificationManager.notify(1, successBuilder.build());
     } catch (Exception e) {
       // Log the full stack trace
       StringWriter sw = new StringWriter();

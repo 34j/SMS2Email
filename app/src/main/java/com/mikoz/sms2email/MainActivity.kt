@@ -174,8 +174,8 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
+                Toast.makeText(context, "Sending email ...", Toast.LENGTH_SHORT).show()
                 MailSender().send(context, "test", "test")
-                Toast.makeText(context, "Test email sent successfully", Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
