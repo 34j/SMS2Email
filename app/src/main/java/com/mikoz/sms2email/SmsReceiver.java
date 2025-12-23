@@ -1,5 +1,6 @@
 package com.mikoz.sms2email;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +29,21 @@ public class SmsReceiver extends BroadcastReceiver {
       }
       String message = bodyText.toString();
       Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-      new NotificationCompat.Builder(context.getApplicationContext())
-          .setContentTitle(sender)
-          .setContentText(message)
-          .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-          .notify();
+
+      NotificationHelper.createNotificationChannel(context);
+
+      NotificationManager notificationManager =
+          (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+      NotificationCompat.Builder builder =
+          new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
+              .setContentTitle(sender)
+              .setContentText(message)
+              .setSmallIcon(android.R.drawable.ic_dialog_email)
+              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+      notificationManager.notify(2, builder.build());
+
       mailSender.send(context, sender, message);
     }
   }

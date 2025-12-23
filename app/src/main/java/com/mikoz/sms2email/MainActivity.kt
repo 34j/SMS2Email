@@ -174,12 +174,8 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                try {
-                    MailSender().send(context, "test", "test")
-                    Toast.makeText(context, "Test email sent successfully", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Failed to send test email: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
+                MailSender().send(context, "test", "test")
+                Toast.makeText(context, "Test email sent successfully", Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
