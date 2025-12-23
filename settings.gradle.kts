@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "SMS2Email"
 include(":app")
- 
