@@ -3,7 +3,10 @@ package com.mikoz.sms2email;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.core.app.NotificationCompat;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -14,6 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class MailSender {
+  private static final String TAG = "MailSender";
 
   public void send(Context context, String subject, String content) {
     final SharedPreferences pref = context.getSharedPreferences("", Context.MODE_PRIVATE);
@@ -41,6 +45,13 @@ public class MailSender {
       message.setText(content);
       Transport.send(message);
     } catch (Exception e) {
+      // Log the full stack trace
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      String stackTrace = sw.toString();
+      Log.e(TAG, "Failed to send email", e);
+
       NotificationHelper.createNotificationChannel(context);
 
       NotificationManager notificationManager =
@@ -50,6 +61,9 @@ public class MailSender {
           new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
               .setContentTitle("Failed to send email")
               .setContentText(e.getMessage())
+              .setStyle(
+                  new NotificationCompat.BigTextStyle()
+                      .bigText(e.getMessage() + "\n\n" + stackTrace))
               .setSmallIcon(android.R.drawable.ic_dialog_email)
               .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
