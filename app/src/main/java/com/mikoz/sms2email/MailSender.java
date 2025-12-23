@@ -59,8 +59,7 @@ public class MailSender {
           new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
               .setContentTitle("Email sent successfully")
               .setContentText("Subject: " + subject)
-              .setSmallIcon(android.R.drawable.ic_dialog_email)
-              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+              .setSmallIcon(android.R.drawable.ic_dialog_email);
 
       notificationManager.notify(1, successBuilder.build());
     } catch (Exception e) {
@@ -83,8 +82,7 @@ public class MailSender {
               .setStyle(
                   new NotificationCompat.BigTextStyle()
                       .bigText(e.getMessage() + "\n\n" + stackTrace))
-              .setSmallIcon(android.R.drawable.ic_dialog_email)
-              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+              .setSmallIcon(android.R.drawable.ic_dialog_email);
 
       notificationManager.notify(1, builder.build());
     }

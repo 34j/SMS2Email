@@ -11,12 +11,7 @@ import androidx.core.app.NotificationCompat;
 import java.util.Objects;
 
 public class SmsReceiver extends BroadcastReceiver {
-  protected MailSender mailSender;
-
-  public SmsReceiver(MailSender mailSender) {
-    super();
-    this.mailSender = mailSender;
-  }
+  protected MailSender mailSender = new MailSender();
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -28,7 +23,7 @@ public class SmsReceiver extends BroadcastReceiver {
         bodyText.append(message.getMessageBody());
       }
       String message = bodyText.toString();
-      Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+      Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 
       NotificationHelper.createNotificationChannel(context);
 
@@ -39,8 +34,7 @@ public class SmsReceiver extends BroadcastReceiver {
           new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
               .setContentTitle(sender)
               .setContentText(message)
-              .setSmallIcon(android.R.drawable.ic_dialog_email)
-              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+              .setSmallIcon(android.R.drawable.ic_dialog_email);
 
       notificationManager.notify(2, builder.build());
 
