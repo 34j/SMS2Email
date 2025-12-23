@@ -15,7 +15,7 @@ public class NotificationHelper {
 
       NotificationChannel channel =
           new NotificationChannel(
-              CHANNEL_ID, "SMS2Email Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+              CHANNEL_ID, "SMS2Email Notifications", NotificationManager.IMPORTANCE_LOW);
       channel.setDescription("Notifications for SMS2Email app events");
 
       notificationManager.createNotificationChannel(channel);
