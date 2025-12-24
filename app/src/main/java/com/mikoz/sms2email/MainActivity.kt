@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
@@ -27,8 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
@@ -39,6 +44,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.core.content.ContextCompat
 import com.mikoz.sms2email.ui.theme.SMS2EmailTheme
 import kotlinx.coroutines.launch
@@ -56,18 +62,35 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //window.setBackgroundDrawableResource(R.drawable.background)
         enableEdgeToEdge()
 
         checkAndRequestSmsPermission()
 
         setContent {
             SMS2EmailTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MailPreferencesScreen(
-                        context = this@MainActivity,
-                        onRequestPermission = { requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS) },
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val isDark = isSystemInDarkTheme()
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (isDark) {
+                        Image(
+                            painter = painterResource(id = R.drawable.background_dark),
+                            contentDescription = "Background",
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth
+                        )
+                    }
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        containerColor = Color.Transparent
+                    ) { innerPadding ->
+                        MailPreferencesScreen(
+                            context = this@MainActivity,
+                            onRequestPermission = { requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS) },
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 }
             }
         }
