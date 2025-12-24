@@ -127,12 +127,29 @@ fun MailPreferencesScreen(
             )
         }
 
-        Text(
-            text = if (isSmsPermissionGranted) "✓ SMS Permission: Granted" else "✗ SMS Permission: Not Granted",
-            color = if (isSmsPermissionGranted) Color.Green else Color.Red,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isSmsPermissionGranted)
+                    MaterialTheme.colorScheme.primaryContainer
+                else
+                    MaterialTheme.colorScheme.errorContainer
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(
+                text = if (isSmsPermissionGranted) "✓ SMS Permission: Granted" else "✗ SMS Permission: Not Granted",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(12.dp),
+                color = if (isSmsPermissionGranted)
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                else
+                    MaterialTheme.colorScheme.onErrorContainer
+            )
+        }
 
         Text(
             text = "SMTP Preferences",
