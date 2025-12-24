@@ -69,12 +69,6 @@ fun CrashScreen(
         )
 
         Text(
-            text = "Error:",
-            fontSize = 14.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Text(
             text = crashMessage,
             fontSize = 12.sp,
             fontFamily = FontFamily.Monospace,
@@ -83,12 +77,6 @@ fun CrashScreen(
                 .padding(8.dp, 4.dp)
                 .padding(bottom = 16.dp),
             color = Color.Gray
-        )
-
-        Text(
-            text = "Stack Trace:",
-            fontSize = 14.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         Text(

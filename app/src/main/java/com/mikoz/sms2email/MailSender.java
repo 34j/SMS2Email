@@ -3,7 +3,6 @@ package com.mikoz.sms2email;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -17,8 +16,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class MailSender {
-  private static final String TAG = "MailSender";
-
   public void send(Context context, String subject, String content) {
     new Thread(() -> sendSync(context, subject, content)).start();
   }
@@ -54,7 +51,6 @@ public class MailSender {
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       String stackTrace = sw.toString();
-      Log.e(TAG, "Failed to send email", e);
 
       NotificationHelper.createNotificationChannel(context);
 
@@ -63,7 +59,7 @@ public class MailSender {
 
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
-              .setContentTitle("Failed to send email")
+              .setContentTitle("⚠️Failed to send email")
               .setContentText(e.getMessage())
               .setStyle(
                   new NotificationCompat.BigTextStyle()
