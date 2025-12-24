@@ -43,6 +43,19 @@ public class MailSender {
       message.setSubject(subject);
       message.setText(content);
       Transport.send(message);
+
+      NotificationHelper.createNotificationChannel(context);
+
+      NotificationManager notificationManager =
+          (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+      NotificationCompat.Builder builder =
+          new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
+              .setContentTitle("Transferred SMS from " + sender)
+              .setContentText(message)
+              .setSmallIcon(android.R.drawable.ic_dialog_email);
+
+      notificationManager.notify(2, builder.build());
     } catch (Exception e) {
       // Log the full stack trace
       StringWriter sw = new StringWriter();
