@@ -120,7 +120,7 @@ fun MailPreferencesScreen(
             shape = MaterialTheme.shapes.medium
         ) {
             Text(
-                text = "SMS2Email automatically forwards received SMS to email via SMTP. SMS forwarding works even if the app is closed.",
+                text = "SMS2Email automatically forwards received SMS to email via SMTP, even if the app is closed.",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(12.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
