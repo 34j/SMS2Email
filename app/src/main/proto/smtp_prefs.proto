@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.mikoz.sms2email";
+option java_multiple_files = true;
+option java_outer_classname = "SmtpPrefsProto";
+
+message SmtpPreferences {
+  string smtp_host = 1;
+  int32 smtp_port = 2;
+  string smtp_user = 3;
+  string smtp_password = 4;
+  string from_email = 5;
+  string to_email = 6;
+}

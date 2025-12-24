@@ -19,10 +19,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,6 +33,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.mikoz.sms2email.ui.theme.SMS2EmailTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MailPreferencesScreen(
                         context = this,
+                        onRequestPermission = { requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS) },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -81,40 +82,19 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
-    val sharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE)
-
-    fun savePreference(key: String, value: String) {
-        sharedPreferences.edit().putString(key, value).apply()
-    }
-
-    fun savePreference(key: String, value: Int) {
-        sharedPreferences.edit().putInt(key, value).apply()
-    }
-
+fun MailPreferencesScreen(
+    context: Context,
+    onRequestPermission: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     val isSmsPermissionGranted = ContextCompat.checkSelfPermission(
         context,
         Manifest.permission.RECEIVE_SMS
     ) == PackageManager.PERMISSION_GRANTED
 
-    var smtpHost by remember {
-        mutableStateOf(sharedPreferences.getString("smtp.host", "smtp.gmail.com") ?: "smtp.gmail.com")
-    }
-    var smtpPort by remember {
-        mutableStateOf(sharedPreferences.getInt("smtp.port", 587).toString())
-    }
-    var smtpUser by remember {
-        mutableStateOf(sharedPreferences.getString("smtp.user", "") ?: "")
-    }
-    var smtpPassword by remember {
-        mutableStateOf(sharedPreferences.getString("smtp.password", "") ?: "")
-    }
-    var fromEmail by remember {
-        mutableStateOf(sharedPreferences.getString("from", "") ?: "")
-    }
-    var toEmail by remember {
-        mutableStateOf(sharedPreferences.getString("to", "") ?: "")
-    }
+    val config by PreferencesManager.smtpConfigFlow(context)
+        .collectAsState(initial = PreferencesManager.defaultConfig)
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -134,11 +114,21 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        if (!isSmsPermissionGranted) {
+            Button(
+                onClick = { onRequestPermission() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Text("Request SMS Permission")
+            }
+        }
+
         OutlinedTextField(
-            value = smtpHost,
-            onValueChange = {
-                smtpHost = it
-                savePreference("smtp.host", it)
+            value = config.smtpHost,
+            onValueChange = { value ->
+                coroutineScope.launch { PreferencesManager.updateSmtpHost(context, value) }
             },
             label = { Text("SMTP Host") },
             modifier = Modifier
@@ -148,11 +138,10 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
-            value = smtpPort,
-            onValueChange = {
-                smtpPort = it
-                it.toIntOrNull()?.let { port ->
-                    savePreference("smtp.port", port)
+            value = config.smtpPort.toString(),
+            onValueChange = { value ->
+                value.toIntOrNull()?.let { port ->
+                    coroutineScope.launch { PreferencesManager.updateSmtpPort(context, port) }
                 }
             },
             label = { Text("SMTP Port") },
@@ -164,10 +153,9 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
-            value = smtpUser,
-            onValueChange = {
-                smtpUser = it
-                savePreference("smtp.user", it)
+            value = config.smtpUser,
+            onValueChange = { value ->
+                coroutineScope.launch { PreferencesManager.updateSmtpUser(context, value) }
             },
             label = { Text("SMTP Username") },
             modifier = Modifier
@@ -177,10 +165,9 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
-            value = smtpPassword,
-            onValueChange = {
-                smtpPassword = it
-                savePreference("smtp.password", it)
+            value = config.smtpPassword,
+            onValueChange = { value ->
+                coroutineScope.launch { PreferencesManager.updateSmtpPassword(context, value) }
             },
             label = { Text("SMTP Password") },
             modifier = Modifier
@@ -191,10 +178,9 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
-            value = fromEmail,
-            onValueChange = {
-                fromEmail = it
-                savePreference("from", it)
+            value = config.fromEmail,
+            onValueChange = { value ->
+                coroutineScope.launch { PreferencesManager.updateFromEmail(context, value) }
             },
             label = { Text("From Email Address") },
             modifier = Modifier
@@ -205,10 +191,9 @@ fun MailPreferencesScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
-            value = toEmail,
-            onValueChange = {
-                toEmail = it
-                savePreference("to", it)
+            value = config.toEmail,
+            onValueChange = { value ->
+                coroutineScope.launch { PreferencesManager.updateToEmail(context, value) }
             },
             label = { Text("To Email Address") },
             modifier = Modifier

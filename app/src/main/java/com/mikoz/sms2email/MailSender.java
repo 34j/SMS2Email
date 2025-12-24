@@ -2,7 +2,6 @@ package com.mikoz.sms2email;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.core.app.NotificationCompat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -21,10 +20,11 @@ public class MailSender {
   }
 
   private void sendSync(Context context, String subject, String content) {
-    final SharedPreferences pref = context.getSharedPreferences("", Context.MODE_PRIVATE);
+    final SmtpConfig config = PreferencesManager.getConfigBlocking(context);
+    final int smtpPort = config.getSmtpPort();
     final Properties prop = new Properties();
-    prop.put("mail.smtp.host", pref.getString("smtp.host", "smtp.gmail.com"));
-    prop.put("mail.smtp.port", pref.getInt("smtp.port", 587));
+    prop.put("mail.smtp.host", config.getSmtpHost());
+    prop.put("mail.smtp.port", smtpPort);
     prop.put("mail.smtp.auth", "true");
     prop.put("mail.smtp.starttls.enable", "true");
 
@@ -34,14 +34,12 @@ public class MailSender {
               prop,
               new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                  return new PasswordAuthentication(
-                      pref.getString("smtp.user", ""), pref.getString("smtp.password", ""));
+                  return new PasswordAuthentication(config.getSmtpUser(), config.getSmtpPassword());
                 }
               });
       Message message = new MimeMessage(session);
-      message.setFrom(new InternetAddress(pref.getString("from", "")));
-      message.setRecipients(
-          Message.RecipientType.TO, InternetAddress.parse(pref.getString("to", "")));
+      message.setFrom(new InternetAddress(config.getFromEmail()));
+      message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(config.getToEmail()));
       message.setSubject(subject);
       message.setText(content);
       Transport.send(message);
@@ -59,7 +57,7 @@ public class MailSender {
 
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
-              .setContentTitle("⚠️Failed to send email")
+              .setContentTitle("Failed to send email")
               .setContentText(e.getMessage())
               .setStyle(
                   new NotificationCompat.BigTextStyle()
