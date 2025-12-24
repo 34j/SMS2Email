@@ -70,6 +70,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             SMS2EmailTheme {
                 val isDark = isSystemInDarkTheme()
+
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize()
+                    ){ _ ->
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (isDark) {
                         Image(
@@ -92,6 +96,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+                    }
             }
         }
     }
