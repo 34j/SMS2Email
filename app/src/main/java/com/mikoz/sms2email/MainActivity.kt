@@ -104,7 +104,13 @@ fun MailPreferencesScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Mail Preferences",
+            text = "SMS2Email automatically forwards received SMS to email via SMTP. SMS forwarding works even if the app is closed.",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Text(
+            text = "✉️ SMTP Preferences",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(bottom = 16.dp)
         )
