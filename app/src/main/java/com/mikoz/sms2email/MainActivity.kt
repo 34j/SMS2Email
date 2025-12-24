@@ -19,6 +19,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,10 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.mikoz.sms2email.ui.theme.SMS2EmailTheme
@@ -184,6 +188,30 @@ fun MailPreferencesScreen(
             singleLine = true,
             visualTransformation = PasswordVisualTransformation()
         )
+
+        if (config.smtpHost.contains("gmail", ignoreCase = true) &&
+            config.smtpPassword.replace(" ", "").length != 16
+        ) {
+            Text(
+                text = "Your 16-digit Google \"App password\" needs to be entered, not your Google Account password.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Red,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = "Generate App Password",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+                    .clickable {
+                        val url = "https://myaccount.google.com/apppasswords"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
+                    }
+            )
+        }
 
         OutlinedTextField(
             value = config.fromEmail,
