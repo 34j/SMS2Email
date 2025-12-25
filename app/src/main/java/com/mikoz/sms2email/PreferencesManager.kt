@@ -13,10 +13,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
-val Context.smtpDataStore: DataStore<SmtpPreferences> by dataStore(
-    fileName = "smtp_prefs.pb",
-    serializer = SmtpPreferencesSerializer
-)
+val Context.smtpDataStore: DataStore<SmtpPreferences> by
+    dataStore(
+        fileName = "smtp_prefs.pb",
+        serializer = SmtpPreferencesSerializer,
+    )
 
 data class SmtpConfig(
     val smtpHost: String = "smtp.gmail.com",
@@ -24,64 +25,85 @@ data class SmtpConfig(
     val smtpUser: String = "",
     val smtpPassword: String = "",
     val fromEmail: String = "",
-    val toEmail: String = ""
+    val toEmail: String = "",
 )
 
 object SmtpPreferencesSerializer : Serializer<SmtpPreferences> {
-    override val defaultValue: SmtpPreferences = SmtpPreferences.getDefaultInstance()
+  override val defaultValue: SmtpPreferences = SmtpPreferences.getDefaultInstance()
 
-    override suspend fun readFrom(input: InputStream): SmtpPreferences =
-        try {
-            SmtpPreferences.parseFrom(input)
-        } catch (exception: InvalidProtocolBufferException) {
-            throw CorruptionException("Cannot read proto.", exception)
-        }
+  override suspend fun readFrom(input: InputStream): SmtpPreferences =
+      try {
+        SmtpPreferences.parseFrom(input)
+      } catch (exception: InvalidProtocolBufferException) {
+        throw CorruptionException("Cannot read proto.", exception)
+      }
 
-    override suspend fun writeTo(t: SmtpPreferences, output: OutputStream) = t.writeTo(output)
+  override suspend fun writeTo(
+      t: SmtpPreferences,
+      output: OutputStream,
+  ) = t.writeTo(output)
 }
 
 object PreferencesManager {
-    val defaultConfig = SmtpConfig()
+  val defaultConfig = SmtpConfig()
 
-    fun smtpConfigFlow(context: Context): Flow<SmtpConfig> =
-        context.smtpDataStore.data.map { prefs ->
-            val port = prefs.smtpPort
-            SmtpConfig(
-                smtpHost = prefs.smtpHost.takeIf { it.isNotBlank() } ?: defaultConfig.smtpHost,
-                smtpPort = if (port > 0) port else defaultConfig.smtpPort,
-                smtpUser = prefs.smtpUser,
-                smtpPassword = prefs.smtpPassword,
-                fromEmail = prefs.fromEmail,
-                toEmail = prefs.toEmail
-            )
-        }
+  fun smtpConfigFlow(context: Context): Flow<SmtpConfig> =
+      context.smtpDataStore.data.map { prefs ->
+        val port = prefs.smtpPort
+        SmtpConfig(
+            smtpHost = prefs.smtpHost.takeIf { it.isNotBlank() } ?: defaultConfig.smtpHost,
+            smtpPort = if (port > 0) port else defaultConfig.smtpPort,
+            smtpUser = prefs.smtpUser,
+            smtpPassword = prefs.smtpPassword,
+            fromEmail = prefs.fromEmail,
+            toEmail = prefs.toEmail,
+        )
+      }
 
-    suspend fun updateSmtpHost(context: Context, value: String) {
-        context.smtpDataStore.updateData { it.toBuilder().setSmtpHost(value).build() }
-    }
+  suspend fun updateSmtpHost(
+      context: Context,
+      value: String,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setSmtpHost(value).build() }
+  }
 
-    suspend fun updateSmtpPort(context: Context, value: Int) {
-        context.smtpDataStore.updateData { it.toBuilder().setSmtpPort(value).build() }
-    }
+  suspend fun updateSmtpPort(
+      context: Context,
+      value: Int,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setSmtpPort(value).build() }
+  }
 
-    suspend fun updateSmtpUser(context: Context, value: String) {
-        context.smtpDataStore.updateData { it.toBuilder().setSmtpUser(value).build() }
-    }
+  suspend fun updateSmtpUser(
+      context: Context,
+      value: String,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setSmtpUser(value).build() }
+  }
 
-    suspend fun updateSmtpPassword(context: Context, value: String) {
-        context.smtpDataStore.updateData { it.toBuilder().setSmtpPassword(value).build() }
-    }
+  suspend fun updateSmtpPassword(
+      context: Context,
+      value: String,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setSmtpPassword(value).build() }
+  }
 
-    suspend fun updateFromEmail(context: Context, value: String) {
-        context.smtpDataStore.updateData { it.toBuilder().setFromEmail(value).build() }
-    }
+  suspend fun updateFromEmail(
+      context: Context,
+      value: String,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setFromEmail(value).build() }
+  }
 
-    suspend fun updateToEmail(context: Context, value: String) {
-        context.smtpDataStore.updateData { it.toBuilder().setToEmail(value).build() }
-    }
+  suspend fun updateToEmail(
+      context: Context,
+      value: String,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setToEmail(value).build() }
+  }
 
-    suspend fun getConfig(context: Context): SmtpConfig = smtpConfigFlow(context).first()
+  suspend fun getConfig(context: Context): SmtpConfig = smtpConfigFlow(context).first()
 
-    @JvmStatic
-    fun getConfigBlocking(context: Context): SmtpConfig = runBlocking { getConfig(context) }
+  @JvmStatic
+  fun getConfigBlocking(context: Context): SmtpConfig = runBlocking { getConfig(context) }
 }
