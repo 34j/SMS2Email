@@ -255,7 +255,7 @@ fun MailPreferencesScreen(
           text =
               "Your 16-digit Google \"App password\" needs to be entered, not your Google Account password.",
           style = MaterialTheme.typography.bodySmall,
-          color = Color.Red,
+          color = MaterialTheme.colorScheme.error,
           modifier = Modifier.padding(bottom = 8.dp),
       )
       Text(
