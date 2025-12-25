@@ -82,6 +82,7 @@ class MainActivity : ComponentActivity() {
                   contentDescription = "Background",
                   modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
                   contentScale = ContentScale.FillWidth,
+                  alpha = 0.3f,
               )
             }
             Scaffold(
