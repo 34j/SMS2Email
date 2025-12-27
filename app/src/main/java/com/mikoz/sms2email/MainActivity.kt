@@ -48,18 +48,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.mikoz.sms2email.ui.theme.SMS2EmailTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+  private val smsPermissionGrantedFlow = MutableStateFlow(false)
   private val requestPermissionLauncher =
       registerForActivityResult(
           ActivityResultContracts.RequestPermission(),
       ) { isGranted: Boolean ->
-        if (isGranted) {
-          Toast.makeText(this, "SMS permission granted", Toast.LENGTH_SHORT).show()
-        } else {
+        if (!isGranted) {
           Toast.makeText(this, "SMS permission denied", Toast.LENGTH_SHORT).show()
         }
+        smsPermissionGrantedFlow.value = isGranted
       }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +73,8 @@ class MainActivity : ComponentActivity() {
     setContent {
       SMS2EmailTheme {
         val isDark = isSystemInDarkTheme()
+        val isSmsPermissionGranted by
+            smsPermissionGrantedFlow.collectAsState(initial = smsPermissionGrantedFlow.value)
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         ) {
@@ -91,6 +94,7 @@ class MainActivity : ComponentActivity() {
             ) { innerPadding ->
               MailPreferencesScreen(
                   context = this@MainActivity,
+                  isSmsPermissionGranted = isSmsPermissionGranted,
                   onRequestPermission = {
                     requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS)
                   },
@@ -104,32 +108,27 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun checkAndRequestSmsPermission() {
-    when {
+    if (isSmsPermissionGranted()) {
+      smsPermissionGrantedFlow.value = true
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS)
+    }
+  }
+
+  private fun isSmsPermissionGranted(): Boolean =
       ContextCompat.checkSelfPermission(
           this,
           Manifest.permission.RECEIVE_SMS,
-      ) == PackageManager.PERMISSION_GRANTED -> {
-        // Permission already granted
-      }
-      else -> {
-        // Request permission
-        requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS)
-      }
-    }
-  }
+      ) == PackageManager.PERMISSION_GRANTED
 }
 
 @Composable
 fun MailPreferencesScreen(
     context: Context,
+    isSmsPermissionGranted: Boolean,
     onRequestPermission: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-  val isSmsPermissionGranted =
-      ContextCompat.checkSelfPermission(
-          context,
-          Manifest.permission.RECEIVE_SMS,
-      ) == PackageManager.PERMISSION_GRANTED
 
   val config by
       PreferencesManager.smtpConfigFlow(context)
