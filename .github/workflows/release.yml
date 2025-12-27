@@ -24,7 +24,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [test]
     environment:
       name: release
     permissions:
