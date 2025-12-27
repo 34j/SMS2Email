@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/34j/SMS2Email/compare/v1.0.0...v1.0.1) (2025-12-27)
+
+
+### Bug Fixes
+
+* update sms permission state display after request ([#2](https://github.com/34j/SMS2Email/issues/2)) ([558c959](https://github.com/34j/SMS2Email/commit/558c959be6d9043cafc2d3c2676ada1e5fdfe1ac))
+
 # 1.1.1 (2025-12-27)
 
 # 1.0.0 (2025-12-27)
