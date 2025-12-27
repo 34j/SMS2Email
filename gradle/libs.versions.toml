@@ -1,9 +1,11 @@
 [versions]
+aboutLibraries = "13.2.1"
 agp = "8.13.2"
 androidMail = "1.6.8"
 appcompat = "1.7.1"
 datastorePreferences = "1.2.0"
 datastoreProto = "1.2.0"
+materialIconsExtended = "1.7.8"
 protobufPlugin = "0.9.6"
 protobufJavaLite = "4.33.2"
 kotlin = "2.3.0"
@@ -14,12 +16,17 @@ espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.2"
 composeBom = "2025.12.01"
-playServicesOssLicenses = "17.3.0"
 
 [libraries]
+# Core module (required for accessing library data)
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+# Compose UI modules (choose one or both)
+aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" } # Common compose core
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }      # Material 3 UI
 android-activation = { module = "com.sun.mail:android-activation", version.ref = "androidMail" }
 android-mail = { module = "com.sun.mail:android-mail", version.ref = "androidMail" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore-proto = { module = "androidx.datastore:datastore", version.ref = "datastoreProto" }
@@ -37,9 +44,9 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
-play-services-oss-licenses = { module = "com.google.android.gms:play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 
 [plugins]
+aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

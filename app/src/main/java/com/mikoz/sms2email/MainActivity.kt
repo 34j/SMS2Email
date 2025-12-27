@@ -45,7 +45,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.mikoz.sms2email.ui.theme.SMS2EmailTheme
 import kotlinx.coroutines.launch
 
@@ -309,7 +308,7 @@ fun MailPreferencesScreen(
         color = MaterialTheme.colorScheme.onSurface,
         modifier =
             Modifier.align(Alignment.BottomEnd).padding(16.dp).clickable {
-              context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+              context.startActivity(Intent(context, AboutActivity::class.java))
             },
     )
   }

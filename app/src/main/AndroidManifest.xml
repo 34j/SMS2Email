@@ -36,13 +36,10 @@
             android:label="App Crashed"
             android:theme="@style/Theme.SMS2Email" />
         <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:label="@string/oss_license_title"
-            android:theme="@style/Theme.AppCompat.DayNight" />
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:label="@string/oss_license_title"
-            android:theme="@style/Theme.AppCompat.DayNight" />
+            android:name=".AboutActivity"
+            android:exported="false"
+            android:label="Licenses"
+            android:theme="@style/Theme.SMS2Email" />
     <receiver
         android:name=".SmsReceiver"
         android:exported="true"
