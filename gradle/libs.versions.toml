@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.2"
 androidMail = "1.6.8"
+appcompat = "1.7.1"
 datastorePreferences = "1.2.0"
 datastoreProto = "1.2.0"
 protobufPlugin = "0.9.6"
@@ -18,6 +19,7 @@ playServicesOssLicenses = "17.3.0"
 [libraries]
 android-activation = { module = "com.sun.mail:android-activation", version.ref = "androidMail" }
 android-mail = { module = "com.sun.mail:android-mail", version.ref = "androidMail" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore-proto = { module = "androidx.datastore:datastore", version.ref = "datastoreProto" }

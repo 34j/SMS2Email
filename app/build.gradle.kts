@@ -14,7 +14,7 @@ android {
 
   defaultConfig {
     applicationId = "com.mikoz.sms2email"
-    minSdk = 28
+    minSdk = 23
     targetSdk = 36
     versionCode = 1
     versionName = "1.0"
@@ -75,4 +75,5 @@ dependencies {
   implementation(libs.android.mail)
   implementation(libs.android.activation)
   implementation(libs.play.services.oss.licenses)
+  implementation(libs.androidx.appcompat)
 }
