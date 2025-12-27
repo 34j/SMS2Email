@@ -1,0 +1,11 @@
+{
+  "uniqueId": "iconoir",
+  "description": "An open source icons library with 1600+ icons, supporting React, React Native, Flutter, Vue, Figma, and Framer. ",
+  "developers": [
+    {
+      "name": "Luca Burgio"
+    }
+  ],
+  "name": "[Manually Added] iconoir",
+  "licenses": ["MIT"]
+}

@@ -1,0 +1,10 @@
+{
+  "uniqueId": "SMS2Email",
+  "developers": [
+    {
+      "name": "34j"
+    }
+  ],
+  "name": "[Manually Added] SMS2Email",
+  "licenses": ["Apache-2.0"]
+}

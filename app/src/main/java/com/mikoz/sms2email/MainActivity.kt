@@ -15,8 +15,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,7 +47,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.mikoz.sms2email.ui.theme.SMS2EmailTheme
 import kotlinx.coroutines.launch
 
@@ -71,10 +72,9 @@ class MainActivity : ComponentActivity() {
     setContent {
       SMS2EmailTheme {
         val isDark = isSystemInDarkTheme()
-
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-        ) { _ ->
+        Box(
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        ) {
           Box(modifier = Modifier.fillMaxSize()) {
             if (isDark) {
               Image(
@@ -304,17 +304,22 @@ fun MailPreferencesScreen(
       ) {
         Text("Send Test Email")
       }
-    }
 
-    Text(
-        text = "Licenses...",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier =
-            Modifier.align(Alignment.BottomEnd).padding(16.dp).clickable {
-              context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-            },
-    )
+      Row(
+          modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 16.dp),
+          horizontalArrangement = Arrangement.End,
+      ) {
+        Text(
+            text = "Licenses...",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier =
+                Modifier.clickable {
+                  context.startActivity(Intent(context, AboutActivity::class.java))
+                },
+        )
+      }
+    }
   }
 }
 

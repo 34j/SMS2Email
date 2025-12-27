@@ -1,10 +1,14 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.protobuf)
-  id("com.google.android.gms.oss-licenses-plugin")
+  id("com.mikepenz.aboutlibraries.plugin.android")
 }
+
+aboutLibraries { collect { configPath = file("../config") } }
 
 android {
   namespace = "com.mikoz.sms2email"
@@ -12,7 +16,7 @@ android {
 
   defaultConfig {
     applicationId = "com.mikoz.sms2email"
-    minSdk = 28
+    minSdk = 23
     targetSdk = 36
     versionCode = 1
     versionName = "1.0"
@@ -33,6 +37,7 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
+  kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_11 } }
   buildFeatures { compose = true }
 
   packaging {
@@ -71,5 +76,8 @@ dependencies {
   debugImplementation(libs.androidx.compose.ui.test.manifest)
   implementation(libs.android.mail)
   implementation(libs.android.activation)
-  implementation(libs.play.services.oss.licenses)
+  implementation(libs.androidx.appcompat)
+  implementation(libs.aboutlibraries.core)
+  implementation(libs.aboutlibraries.compose.m3)
+  implementation(libs.androidx.compose.material.icons.extended)
 }
