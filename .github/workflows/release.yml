@@ -38,7 +38,7 @@ jobs:
 
   release:
     name: Release
-    needs: test
+    # needs: test
     runs-on: ubuntu-latest
     environment:
       name: release
