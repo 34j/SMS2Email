@@ -17,14 +17,7 @@ repos:
       - id: check-yaml
       - id: detect-private-key
       - id: end-of-file-fixer
-      - id:
-          trailing-whitespace
-          # - repo: https://gitlab.developers.cam.ac.uk/uis/devops/continuous-delivery/precommit-google-java-format
-          #   rev: v1.2.0
-          #   hooks:
-          #     - id: google-java-format
-          #       files: "\\.java$"
-          #       args: ["-i"]
+      - id: trailing-whitespace
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.15.0
     hooks:
