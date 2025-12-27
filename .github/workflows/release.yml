@@ -65,10 +65,10 @@ jobs:
         # Set `KEYSTORE_PASSWORD` secret to the password used to encrypt the keystore.
         run: |
           echo "${{ secrets.KEYSTORE }}" > keystore.jks.asc
-          gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch keystore.jks.asc > ~/keystore.jks
+          gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch keystore.jks.asc > keystore.jks
           rm keystore.jks.asc
       - name: Build Release APK
-        run: ./gradlew :app:assembleRelease -Pandroid.injected.signing.store.file=~/keystore.jks -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_STORE_PASSWORD }}" -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password="${{ secrets.KEYSTORE_KEY_PASSWORD }}"
+        run: ./gradlew :app:assembleRelease -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks -Pandroid.injected.signing.store.password="${{ secrets.KEYSTORE_STORE_PASSWORD }}" -Pandroid.injected.signing.key.alias=key0 -Pandroid.injected.signing.key.password="${{ secrets.KEYSTORE_KEY_PASSWORD }}"
       - name: Attest Build Provnance
         uses: actions/attest-build-provenance@v1
         with:
