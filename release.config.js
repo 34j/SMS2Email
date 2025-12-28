@@ -1,9 +1,20 @@
+const fs = require("node:fs");
+
 const {
   KEYSTORE_FILE,
   KEYSTORE_STORE_PASSWORD,
   KEYSTORE_KEY_ALIAS,
   KEYSTORE_KEY_PASSWORD,
 } = process.env;
+
+const buildGradlePath = "app/build.gradle.kts";
+const buildGradleContents = fs.readFileSync(buildGradlePath, "utf8");
+const versionCodeMatch = buildGradleContents.match(/versionCode\s*=\s*(\d+)/);
+if (!versionCodeMatch) {
+  throw new Error(`versionCode not found in ${buildGradlePath}`);
+}
+const CURRENT_VERSION_CODE = Number(versionCodeMatch[1]);
+const NEXT_VERSION_CODE = CURRENT_VERSION_CODE + 1;
 
 module.exports = {
   plugins: [
@@ -21,10 +32,10 @@ module.exports = {
         // - Writes Fastlane/Play changelog file: metadata/en-US/changelogs/<versionCode>.txt with nextRelease notes.
         // - Builds: ./gradlew :app:assembleRelease using injected signing properties.
         prepareCmd: [
-          "VERSION_CODE=$(grep -oP 'versionCode = \\K[0-9]+' app/build.gradle.kts); NEW_VERSION_CODE=$((VERSION_CODE + 1)); sed -i -E \"s/versionCode = [0-9]+/versionCode = ${NEW_VERSION_CODE}/\" app/build.gradle.kts",
+          `sed -i -E "s/versionCode = [0-9]+/versionCode = ${NEXT_VERSION_CODE}/" ${buildGradlePath}`,
           "sed -i -E 's/versionName = .*/versionName = \"${nextRelease.version}\"/' app/build.gradle.kts",
           "mkdir -p metadata/en-US/changelogs",
-          'echo "${nextRelease.notes}" > metadata/en-US/changelogs/$(grep -oP "versionCode = \\K[0-9]+" app/build.gradle.kts).txt',
+          `echo "${nextRelease.notes}" > metadata/en-US/changelogs/${NEXT_VERSION_CODE}.txt`,
           "./gradlew :app:assembleRelease \\",
           `  -Pandroid.injected.signing.store.file="${KEYSTORE_FILE}" \\`,
           `  -Pandroid.injected.signing.store.password="${KEYSTORE_STORE_PASSWORD}" \\`,
