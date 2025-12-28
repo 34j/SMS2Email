@@ -1,0 +1,10 @@
+## [1.0.10](https://github.com/SMS2Email/SMS2Email/compare/v1.0.9...v1.0.10) (2025-12-28)
+
+
+### Bug Fixes
+
+* remove dependenciesInfo ([1e29836](https://github.com/SMS2Email/SMS2Email/commit/1e29836fe9c506ca26c742dfea219d9b25671c94))
+
+
+
+
