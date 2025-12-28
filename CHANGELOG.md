@@ -1,3 +1,11 @@
+## [1.0.3](https://github.com/SMS2Email/SMS2Email/compare/v1.0.2...v1.0.3) (2025-12-28)
+
+
+### Bug Fixes
+
+* remove READ_SMS permission ([#4](https://github.com/SMS2Email/SMS2Email/issues/4)) ([7840246](https://github.com/SMS2Email/SMS2Email/commit/78402465dddc931967806725bb6246d200fdfafc))
+* rename namespace ([#5](https://github.com/SMS2Email/SMS2Email/issues/5)) ([254f211](https://github.com/SMS2Email/SMS2Email/commit/254f211a32fe842b802236ccc82e07a140567cd5))
+
 ## [1.0.2](https://github.com/34j/SMS2Email/compare/v1.0.1...v1.0.2) (2025-12-27)
 
 
