@@ -47,6 +47,11 @@ android {
       excludes += "META-INF/NOTICE.md"
     }
   }
+
+  dependenciesInfo {
+    includeInApk = false
+    includeInBundle = false
+  }
 }
 
 protobuf {
