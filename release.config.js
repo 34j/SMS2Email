@@ -22,6 +22,16 @@ module.exports = {
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     [
+      "@semantic-release/git",
+      {
+        assets: [
+          "CHANGELOG.md",
+          "app/build.gradle.kts",
+          "metadata/en-US/changelogs/*.txt",
+        ],
+      },
+    ],
+    [
       "@semantic-release/exec",
       {
         // prepareCmd design:
@@ -31,28 +41,20 @@ module.exports = {
         // - Updates app/build.gradle.kts (versionCode++, versionName = "<nextRelease.version>").
         // - Writes Fastlane/Play changelog file: metadata/en-US/changelogs/<versionCode>.txt with nextRelease notes.
         // - Builds: ./gradlew :app:assembleRelease using injected signing properties.
-        prepareCmd: [
+        generateNotesCmd: [
           `sed -i -E "s/versionCode = [0-9]+/versionCode = ${NEXT_VERSION_CODE}/" ${buildGradlePath}`,
           "sed -i -E 's/versionName = .*/versionName = \"${nextRelease.version}\"/' app/build.gradle.kts",
           "mkdir -p metadata/en-US/changelogs",
           'echo "${nextRelease.notes}"' +
             ` > metadata/en-US/changelogs/${NEXT_VERSION_CODE}.txt`,
+        ].join("\n"),
+        prepareCmd: [
           "./gradlew :app:assembleRelease \\",
           `  -Pandroid.injected.signing.store.file="${KEYSTORE_FILE}" \\`,
           `  -Pandroid.injected.signing.store.password="${KEYSTORE_STORE_PASSWORD}" \\`,
           `  -Pandroid.injected.signing.key.alias="${KEYSTORE_KEY_ALIAS}" \\`,
           `  -Pandroid.injected.signing.key.password="${KEYSTORE_KEY_PASSWORD}"`,
         ].join("\n"),
-      },
-    ],
-    [
-      "@semantic-release/git",
-      {
-        assets: [
-          "CHANGELOG.md",
-          "app/build.gradle.kts",
-          "metadata/en-US/changelogs/*.txt",
-        ],
       },
     ],
     [
