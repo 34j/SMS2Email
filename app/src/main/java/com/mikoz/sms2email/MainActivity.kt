@@ -197,6 +197,8 @@ fun MailPreferencesScreen(
 
   val coroutineScope = rememberCoroutineScope()
 
+  val portNumber = smtpPortState.value.toIntOrNull()
+
   val encryptionExpandedState = rememberSaveable { mutableStateOf(false) }
   val encryptionLabel =
       when (config.encryptionMode) {
@@ -386,6 +388,28 @@ fun MailPreferencesScreen(
               },
           )
         }
+      }
+
+      val warningText =
+          when {
+            config.encryptionMode == SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_NONE ->
+                "Warning: No encryption selected. This may expose credentials and email content."
+            portNumber == 465 &&
+                config.encryptionMode != SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_SMTPS ->
+                "Warning: Port 465 is typically used with SMTPS (SSL/TLS)."
+            portNumber != null &&
+                portNumber != 465 &&
+                config.encryptionMode == SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_SMTPS ->
+                "Warning: SMTPS (SSL/TLS) typically uses port 465."
+            else -> null
+          }
+      if (warningText != null) {
+        Text(
+            text = warningText,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(bottom = 12.dp),
+        )
       }
 
       OutlinedTextField(
