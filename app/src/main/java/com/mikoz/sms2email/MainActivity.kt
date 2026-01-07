@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -62,6 +63,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
   private val smsPermissionGrantedFlow = MutableStateFlow(false)
+  private val notificationPermissionGrantedFlow = MutableStateFlow(false)
   private val requestPermissionLauncher =
       registerForActivityResult(
           ActivityResultContracts.RequestPermission(),
@@ -72,6 +74,16 @@ class MainActivity : ComponentActivity() {
         smsPermissionGrantedFlow.value = isGranted
       }
 
+  private val requestNotificationPermissionLauncher =
+      registerForActivityResult(
+          ActivityResultContracts.RequestPermission(),
+      ) { isGranted: Boolean ->
+        if (!isGranted) {
+          Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show()
+        }
+        notificationPermissionGrantedFlow.value = isGranted
+      }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     // window.setBackgroundDrawableResource(R.drawable.background)
@@ -80,11 +92,18 @@ class MainActivity : ComponentActivity() {
     smsPermissionGrantedFlow.value = isSmsPermissionGranted()
     val initialSmsPermissionGranted = smsPermissionGrantedFlow.value
 
+    notificationPermissionGrantedFlow.value = isNotificationPermissionGranted()
+    val initialNotificationPermissionGranted = notificationPermissionGrantedFlow.value
+
     setContent {
       SMS2EmailTheme {
         val isDark = isSystemInDarkTheme()
         val isSmsPermissionGranted by
             smsPermissionGrantedFlow.collectAsState(initial = initialSmsPermissionGranted)
+        val isNotificationPermissionGranted by
+            notificationPermissionGrantedFlow.collectAsState(
+                initial = initialNotificationPermissionGranted,
+            )
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         ) {
@@ -108,6 +127,14 @@ class MainActivity : ComponentActivity() {
                   onRequestPermission = {
                     requestPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS)
                   },
+                  isNotificationPermissionGranted = isNotificationPermissionGranted,
+                  onRequestNotificationPermission = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                      requestNotificationPermissionLauncher.launch(
+                          Manifest.permission.POST_NOTIFICATIONS,
+                      )
+                    }
+                  },
                   modifier = Modifier.padding(innerPadding),
               )
             }
@@ -122,6 +149,14 @@ class MainActivity : ComponentActivity() {
           this,
           Manifest.permission.RECEIVE_SMS,
       ) == PackageManager.PERMISSION_GRANTED
+
+  private fun isNotificationPermissionGranted(): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
+    return ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.POST_NOTIFICATIONS,
+    ) == PackageManager.PERMISSION_GRANTED
+  }
 }
 
 @Composable
@@ -129,6 +164,8 @@ fun MailPreferencesScreen(
     context: Context,
     isSmsPermissionGranted: Boolean,
     onRequestPermission: () -> Unit = {},
+    isNotificationPermissionGranted: Boolean,
+    onRequestNotificationPermission: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
 
@@ -230,6 +267,46 @@ fun MailPreferencesScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
               Text("Request SMS Permission")
+            }
+          }
+        }
+      }
+
+      Card(
+          modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+          colors =
+              CardDefaults.cardColors(
+                  containerColor =
+                      if (isNotificationPermissionGranted) {
+                        MaterialTheme.colorScheme.primaryContainer
+                      } else {
+                        MaterialTheme.colorScheme.errorContainer
+                      },
+              ),
+          elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+          shape = MaterialTheme.shapes.medium,
+      ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+          Text(
+              text =
+                  if (isNotificationPermissionGranted) "✓ Notification Permission: Granted"
+                  else "✗ Notification Permission: Not Granted",
+              style = MaterialTheme.typography.bodyLarge,
+              color =
+                  if (isNotificationPermissionGranted) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                  } else {
+                    MaterialTheme.colorScheme.onErrorContainer
+                  },
+          )
+
+          if (!isNotificationPermissionGranted) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { onRequestNotificationPermission() },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+              Text("Request Notification Permission")
             }
           }
         }

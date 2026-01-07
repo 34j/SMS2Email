@@ -30,17 +30,20 @@ public class MailSender {
     // Configure transport encryption.
     switch (config.getEncryptionMode()) {
       case SMTP_ENCRYPTION_MODE_NONE:
+        prop.setProperty("mail.smtp.starttls.enable", "false");
+        prop.setProperty("mail.smtp.ssl.enable", "false"); // enabled by default
         break;
       case SMTP_ENCRYPTION_MODE_SMTPS:
-        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.setProperty("mail.smtp.socketFactory.fallback", "false");
-        props.setProperty("mail.smtp.ssl.checkserveridentity", "true");
+        prop.setProperty("mail.smtp.starttls.enable", "false");
+        prop.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        prop.setProperty("mail.smtp.socketFactory.fallback", "false");
+        prop.setProperty("mail.smtp.ssl.checkserveridentity", "true");
         break;
       case SMTP_ENCRYPTION_MODE_STARTTLS:
       default:
-        prop.put("mail.smtp.starttls.enable", "true");
-        prop.put("mail.smtp.starttls.required", "true");
-        props.setProperty("mail.smtp.ssl.checkserveridentity", "true");
+        prop.setProperty("mail.smtp.starttls.enable", "true");
+        prop.setProperty("mail.smtp.starttls.required", "true");
+        prop.setProperty("mail.smtp.ssl.checkserveridentity", "true");
         break;
     }
 
