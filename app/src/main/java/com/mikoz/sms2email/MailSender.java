@@ -62,7 +62,7 @@ public class MailSender {
           Message.RecipientType.TO,
           InternetAddress.parse(subject + " <" + config.getToEmail() + ">"));
       message.setSubject("SMS from " + subject);
-      message.setText(content);
+      message.setText(content + "\n(Automatically transferred by an Android app SMS2Email)");
       Transport.send(message);
 
       NotificationHelper.createNotificationChannel(context);

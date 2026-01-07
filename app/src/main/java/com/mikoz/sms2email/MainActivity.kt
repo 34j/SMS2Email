@@ -33,6 +33,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -160,6 +163,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun MailPreferencesScreen(
     context: Context,
     isSmsPermissionGranted: Boolean,
@@ -337,19 +341,25 @@ fun MailPreferencesScreen(
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
       )
 
-      Box(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+      ExposedDropdownMenuBox(
+          expanded = encryptionExpandedState.value,
+          onExpandedChange = { encryptionExpandedState.value = !encryptionExpandedState.value },
+          modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+      ) {
         OutlinedTextField(
             value = encryptionLabel,
             onValueChange = {},
-            label = { Text("Encryption") },
-            modifier = Modifier.fillMaxWidth().clickable { encryptionExpandedState.value = true },
-            singleLine = true,
             readOnly = true,
+            singleLine = true,
+            label = { Text("Encryption") },
+            trailingIcon = {
+              ExposedDropdownMenuDefaults.TrailingIcon(expanded = encryptionExpandedState.value)
+            },
+            modifier = Modifier.menuAnchor().fillMaxWidth(),
         )
         DropdownMenu(
             expanded = encryptionExpandedState.value,
             onDismissRequest = { encryptionExpandedState.value = false },
-            modifier = Modifier.fillMaxWidth(),
         ) {
           DropdownMenuItem(
               text = { Text("STARTTLS") },
@@ -473,7 +483,7 @@ fun MailPreferencesScreen(
       Button(
           onClick = {
             Toast.makeText(context, "Sending email ...", Toast.LENGTH_SHORT).show()
-            MailSender().send(context, "test", "test")
+            MailSender().send(context, "Test Email from SMS2Email", "This is a test email.")
           },
           modifier = Modifier.fillMaxWidth(),
       ) {
