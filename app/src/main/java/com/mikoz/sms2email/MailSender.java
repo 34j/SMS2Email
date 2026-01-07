@@ -26,7 +26,23 @@ public class MailSender {
     prop.put("mail.smtp.host", config.getSmtpHost());
     prop.put("mail.smtp.port", smtpPort);
     prop.put("mail.smtp.auth", "true");
-    prop.put("mail.smtp.starttls.enable", "true");
+
+    // Configure transport encryption.
+    switch (config.getEncryptionMode()) {
+      case SMTP_ENCRYPTION_MODE_NONE:
+        break;
+      case SMTP_ENCRYPTION_MODE_SMTPS:
+        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.smtp.ssl.checkserveridentity", "true");
+        break;
+      case SMTP_ENCRYPTION_MODE_STARTTLS:
+      default:
+        prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.starttls.required", "true");
+        props.setProperty("mail.smtp.ssl.checkserveridentity", "true");
+        break;
+    }
 
     try {
       Session session =

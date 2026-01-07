@@ -30,6 +30,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -40,6 +42,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +58,7 @@ import androidx.core.content.ContextCompat
 import io.github.sms2email.sms2email.ui.theme.SMS2EmailTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
   private val smsPermissionGrantedFlow = MutableStateFlow(false)
@@ -154,6 +158,17 @@ fun MailPreferencesScreen(
   val toEmailState =
       rememberPreferenceTextState(config.toEmail) { PreferencesManager.updateToEmail(context, it) }
 
+  val coroutineScope = rememberCoroutineScope()
+
+  val encryptionExpandedState = rememberSaveable { mutableStateOf(false) }
+  val encryptionLabel =
+      when (config.encryptionMode) {
+        SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_NONE -> "None"
+        SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_SMTPS -> "SMTPS (SSL/TLS)"
+        SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_STARTTLS -> "STARTTLS"
+        else -> "STARTTLS"
+      }
+
   Box(modifier = modifier.fillMaxSize()) {
     Column(
         modifier =
@@ -242,6 +257,59 @@ fun MailPreferencesScreen(
           singleLine = true,
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
       )
+
+      Box(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+        OutlinedTextField(
+            value = encryptionLabel,
+            onValueChange = {},
+            label = { Text("Encryption") },
+            modifier = Modifier.fillMaxWidth().clickable { encryptionExpandedState.value = true },
+            singleLine = true,
+            readOnly = true,
+        )
+        DropdownMenu(
+            expanded = encryptionExpandedState.value,
+            onDismissRequest = { encryptionExpandedState.value = false },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+          DropdownMenuItem(
+              text = { Text("STARTTLS") },
+              onClick = {
+                encryptionExpandedState.value = false
+                coroutineScope.launch {
+                  PreferencesManager.updateEncryptionMode(
+                      context,
+                      SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_STARTTLS,
+                  )
+                }
+              },
+          )
+          DropdownMenuItem(
+              text = { Text("SMTPS (SSL/TLS)") },
+              onClick = {
+                encryptionExpandedState.value = false
+                coroutineScope.launch {
+                  PreferencesManager.updateEncryptionMode(
+                      context,
+                      SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_SMTPS,
+                  )
+                }
+              },
+          )
+          DropdownMenuItem(
+              text = { Text("None") },
+              onClick = {
+                encryptionExpandedState.value = false
+                coroutineScope.launch {
+                  PreferencesManager.updateEncryptionMode(
+                      context,
+                      SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_NONE,
+                  )
+                }
+              },
+          )
+        }
+      }
 
       OutlinedTextField(
           value = smtpUserState.value,

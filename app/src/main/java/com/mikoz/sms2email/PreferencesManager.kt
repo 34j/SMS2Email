@@ -26,6 +26,7 @@ data class SmtpConfig(
     val smtpPassword: String = "",
     val fromEmail: String = "",
     val toEmail: String = "",
+    val encryptionMode: SmtpEncryptionMode = SmtpEncryptionMode.SMTP_ENCRYPTION_MODE_STARTTLS,
 )
 
 object SmtpPreferencesSerializer : Serializer<SmtpPreferences> {
@@ -57,6 +58,9 @@ object PreferencesManager {
             smtpPassword = prefs.smtpPassword,
             fromEmail = prefs.fromEmail,
             toEmail = prefs.toEmail,
+            encryptionMode =
+                prefs.encryptionMode.takeIf { it != SmtpEncryptionMode.UNRECOGNIZED }
+                    ?: defaultConfig.encryptionMode,
         )
       }
 
@@ -100,6 +104,13 @@ object PreferencesManager {
       value: String,
   ) {
     context.smtpDataStore.updateData { it.toBuilder().setToEmail(value).build() }
+  }
+
+  suspend fun updateEncryptionMode(
+      context: Context,
+      value: SmtpEncryptionMode,
+  ) {
+    context.smtpDataStore.updateData { it.toBuilder().setEncryptionMode(value).build() }
   }
 
   suspend fun getConfig(context: Context): SmtpConfig = smtpConfigFlow(context).first()
