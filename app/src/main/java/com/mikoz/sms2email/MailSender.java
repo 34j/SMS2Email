@@ -2,6 +2,9 @@ package io.github.sms2email.sms2email;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -81,6 +84,14 @@ public class MailSender {
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       String stackTrace = sw.toString();
+
+      // Show toast notification on failure
+      new Handler(Looper.getMainLooper())
+          .post(
+              () ->
+                  Toast.makeText(
+                          context, "Failed to send email\n" + e.getMessage(), Toast.LENGTH_LONG)
+                      .show());
 
       NotificationHelper.createNotificationChannel(context);
 
