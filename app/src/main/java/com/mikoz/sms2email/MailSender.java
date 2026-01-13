@@ -58,7 +58,6 @@ public class MailSender {
               });
       Message message = new MimeMessage(session);
       message.setFrom(InternetAddress.parse(subject + " <" + config.getToEmail() + ">")[0]);
-      message.setSender(InternetAddress.parse("SMS2Email <" + config.getToEmail() + ">")[0]);
       message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(config.getToEmail()));
       message.setSubject("SMS from " + subject);
       message.setText(content);
