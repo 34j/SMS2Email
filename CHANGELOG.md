@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/SMS2Email/SMS2Email/compare/v1.1.2...v1.1.3) (2026-01-14)
+
+
+### Bug Fixes
+
+* set higher priority (2147483647) for `android.provider.Telephony.SMS_RECEIVED` ([#19](https://github.com/SMS2Email/SMS2Email/issues/19)) ([c9ccb88](https://github.com/SMS2Email/SMS2Email/commit/c9ccb88814e3ef934ca2229597ebbd68aa8e1b57))
+
 ## [1.1.2](https://github.com/SMS2Email/SMS2Email/compare/v1.1.1...v1.1.2) (2026-01-13)
 
 
