@@ -4,8 +4,8 @@ An Android application that forwards incoming SMS messages to a specified email 
 
 This app is useful for users who need to access their SMS messages remotely.
 
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/io.github.sms2email.sms2email)
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" height="80" alt="Get it at IzzyOnDroid">](https://apt.izzysoft.de/packages/io.github.sms2email.sms2email)
+<p align="center"><a href="https://f-droid.org/packages/io.github.sms2email.sms2email/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid"  width="207" /></a>
+<a href="https://apt.izzysoft.de/fdroid/index/apk/io.github.sms2email.sms2email"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" alt="Get it on IzzyOnDroid" width="207" /></a></p>
 
 | 🌙                                                                        | ☀️                                                                         |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
