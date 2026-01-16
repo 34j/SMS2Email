@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/SMS2Email/SMS2Email/compare/v1.1.4...v1.1.5) (2026-01-16)
+
+
+### Bug Fixes
+
+* fix title color in MainActivity, update README.md and metadata, set Renovate commit type to chore ([#23](https://github.com/SMS2Email/SMS2Email/issues/23)) ([fcf8954](https://github.com/SMS2Email/SMS2Email/commit/fcf8954c4514d1935e7b12e1c76314715c3bf78a))
+
 ## [1.1.4](https://github.com/SMS2Email/SMS2Email/compare/v1.1.3...v1.1.4) (2026-01-15)
 
 
