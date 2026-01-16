@@ -2,6 +2,7 @@
   "extends": [
     "config:best-practices",
     ":pinOnlyDevDependencies",
-    ":automergeAll"
+    ":automergeAll",
+    ":semanticCommitType(chore)"
   ]
 }
