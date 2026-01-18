@@ -62,7 +62,12 @@ object PreferencesManager {
             encryptionMode =
                 prefs.encryptionMode.takeIf { it != SmtpEncryptionMode.UNRECOGNIZED }
                     ?: defaultConfig.encryptionMode,
-            enabled = prefs.enabled,
+            enabled =
+                when (prefs.forwardingState) {
+                  ForwardingState.FORWARDING_STATE_DISABLED -> false
+                  ForwardingState.FORWARDING_STATE_ENABLED -> true
+                  else -> defaultConfig.enabled // UNSET defaults to enabled
+                },
         )
       }
 
@@ -119,7 +124,10 @@ object PreferencesManager {
       context: Context,
       value: Boolean,
   ) {
-    context.smtpDataStore.updateData { it.toBuilder().setEnabled(value).build() }
+    val state =
+        if (value) ForwardingState.FORWARDING_STATE_ENABLED
+        else ForwardingState.FORWARDING_STATE_DISABLED
+    context.smtpDataStore.updateData { it.toBuilder().setForwardingState(state).build() }
   }
 
   suspend fun getConfig(context: Context): SmtpConfig = smtpConfigFlow(context).first()
