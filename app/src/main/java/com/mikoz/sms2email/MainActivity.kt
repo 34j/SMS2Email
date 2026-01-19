@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import io.github.sms2email.sms2email.ui.theme.SMS2EmailTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -96,7 +97,7 @@ class MainActivity : ComponentActivity() {
           result.data?.let { data ->
             val keyIds = data.getLongArrayExtra("key_ids")
             if (keyIds != null && keyIds.isNotEmpty()) {
-              kotlinx.coroutines.GlobalScope.launch {
+              lifecycleScope.launch {
                 PreferencesManager.updatePgpKeyIds(this@MainActivity, keyIds.toList())
               }
               Toast.makeText(this, "PGP key selected", Toast.LENGTH_SHORT).show()
