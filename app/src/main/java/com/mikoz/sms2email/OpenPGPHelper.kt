@@ -2,7 +2,6 @@ package io.github.sms2email.sms2email
 
 import android.content.Context
 import android.content.Intent
-import android.os.ParcelFileDescriptor
 import android.util.Log
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

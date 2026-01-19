@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SMS2Email</string>
+    <string name="pgp_encryption">PGP Encryption (via OpenKeychain)</string>
+    <string name="enable_pgp_encryption">Enable PGP Encryption</string>
+    <string name="pgp_description">When enabled, SMS messages will be encrypted with PGP before being sent via email. Requires OpenKeychain app to be installed.</string>
+    <string name="pgp_openkeychain_not_installed">⚠ OpenKeychain app is not installed. Please install it from F-Droid.</string>
+    <string name="select_pgp_key">Select PGP Key</string>
+    <string name="change_pgp_key">Change PGP Key (%d selected)</string>
 </resources>
