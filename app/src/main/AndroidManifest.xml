@@ -11,6 +11,12 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <!--Required to post SMTP requests-->
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- Query for OpenKeychain app -->
+    <queries>
+        <package android:name="org.sufficientlysecure.keychain" />
+    </queries>
+    
     <application
         android:name=".CustomApplication"
         android:allowBackup="true"

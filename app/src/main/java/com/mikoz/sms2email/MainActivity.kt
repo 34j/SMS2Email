@@ -39,6 +39,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +60,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import io.github.sms2email.sms2email.ui.theme.SMS2EmailTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,6 +87,25 @@ class MainActivity : ComponentActivity() {
           Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show()
         }
         notificationPermissionGrantedFlow.value = isGranted
+      }
+
+  private val selectPgpKeyLauncher =
+      registerForActivityResult(
+          ActivityResultContracts.StartActivityForResult(),
+      ) { result ->
+        if (result.resultCode == RESULT_OK) {
+          result.data?.let { data ->
+            val keyIds = data.getLongArrayExtra(OpenPGPHelper.EXTRA_KEY_IDS)
+            if (keyIds != null && keyIds.isNotEmpty()) {
+              lifecycleScope.launch {
+                PreferencesManager.updatePgpKeyIds(this@MainActivity, keyIds.toList())
+              }
+              Toast.makeText(this, "PGP key selected", Toast.LENGTH_SHORT).show()
+            }
+          }
+        } else {
+          Toast.makeText(this, "No PGP key selected", Toast.LENGTH_SHORT).show()
+        }
       }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,6 +159,7 @@ class MainActivity : ComponentActivity() {
                       )
                     }
                   },
+                  onSelectPgpKey = { selectPgpKeyLauncher.launch(OpenPGPHelper.createSelectKeyIntent()) },
                   modifier = Modifier.padding(innerPadding),
               )
             }
@@ -170,6 +192,7 @@ fun MailPreferencesScreen(
     onRequestPermission: () -> Unit = {},
     isNotificationPermissionGranted: Boolean,
     onRequestNotificationPermission: () -> Unit = {},
+    onSelectPgpKey: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
 
@@ -485,6 +508,74 @@ fun MailPreferencesScreen(
           singleLine = true,
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
       )
+
+      Text(
+          text = "PGP Encryption (via OpenKeychain)",
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onBackground,
+          modifier = Modifier.padding(bottom = 16.dp),
+      )
+
+      Card(
+          modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+          colors =
+              CardDefaults.cardColors(
+                  containerColor = MaterialTheme.colorScheme.surfaceVariant,
+              ),
+          elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+          shape = MaterialTheme.shapes.medium,
+      ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Text(
+                text = "Enable PGP Encryption",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Switch(
+                checked = config.pgpEnabled,
+                onCheckedChange = { enabled ->
+                  coroutineScope.launch { PreferencesManager.updatePgpEnabled(context, enabled) }
+                },
+            )
+          }
+
+          Text(
+              text =
+                  "When enabled, SMS messages will be encrypted with PGP before being sent via email. " +
+                      "Requires OpenKeychain app to be installed.",
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.padding(bottom = 8.dp),
+          )
+
+          if (config.pgpEnabled) {
+            val pgpHelper = OpenPGPHelper(context)
+            if (!pgpHelper.isOpenKeychainInstalled()) {
+              Text(
+                  text = "⚠ OpenKeychain app is not installed. Please install it from F-Droid.",
+                  style = MaterialTheme.typography.bodySmall,
+                  color = MaterialTheme.colorScheme.error,
+                  modifier = Modifier.padding(bottom = 8.dp),
+              )
+            }
+
+            Button(
+                onClick = { onSelectPgpKey() },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+              Text(
+                  if (config.pgpKeyIds.isEmpty()) "Select PGP Key"
+                  else "Change PGP Key (${config.pgpKeyIds.size} selected)",
+              )
+            }
+          }
+        }
+      }
 
       Button(
           onClick = {
